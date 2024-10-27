@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include "tokenizer.h"
 
 
@@ -6,7 +7,7 @@ int space_char(char c)
 
 {
 
-  if(c == '\t' || c == ' ')
+  if(c == '\t' || c == ' ' || c == '\n')
 
     return 1;
 
@@ -22,7 +23,7 @@ int non_space_char(char c)
 
 {
 
-  if(c != '\t' & c != ' ')
+  if(c != '\t' & c != ' ' & c != '\n')
 
     return 1;
 
@@ -36,15 +37,12 @@ int non_space_char(char c)
 
 char *token_start(char *str)
 {
-  char *startp;
-  char start;
-  while(*str){
+  
+  while(*str != 0){
     if(non_space_char(*str)){
-	start = *str;
-	startp = &start;
-	return startp;
+	return str;
     }
-    *str++;
+    str++;
 
   }
   return 0;
@@ -57,11 +55,15 @@ char *token_start(char *str)
 char *token_terminator(char *token)
 
 {
-  char *terminator;
-  
-  terminator = (++*token);
-  *terminator = 0;
-  return terminator;
+  int i = 0;
+  while(*token != 0){
+    if(space_char(*token))
+      *token = '\0';
+    i++;
+    token++;
+  }
+  token -= i;
+  return token;
 
 }
 
@@ -70,12 +72,13 @@ char *token_terminator(char *token)
 int count_tokens(char *str)
 {
   int count = 0;
-  while(*str){
-    if(space_char(*str))
+  while(*str != 0){
+    if(*str = '\0')
       count++;
+    str++;
   }
 
-  return count--;
+  return count;
 
 }
 
@@ -85,12 +88,17 @@ char *copy_str(char *inStr, short len)
 
 {
   char *copy;
+  copy = (char *) malloc(len+1);
+  int i = 0; 
   while(len < 0){
     *copy = *inStr;
     len--;
-    ++*copy;
-    ++*inStr;
+    copy++;
+    inStr++;
+    i++;
   }
+  copy -= i;
+  return copy;
 
 }
 
@@ -99,8 +107,20 @@ char *copy_str(char *inStr, short len)
 char **tokenize(char* str)
 
 {
-
-  return NULL;
+  char** arr;
+  arr = (char **) malloc(30);
+  short i = 0;
+  str = token_terminator(str);
+  while(*str != '\n'){
+    if(*str == '\0'){
+      *arr = copy_str(str - i, i); 
+      arr++;
+      i = 0;
+    }
+    i++;
+    str++;
+  }
+  return arr;
 
 }
 
@@ -108,7 +128,15 @@ char **tokenize(char* str)
 
 void print_tokens(char **tokens)
 {
-
+  while(tokens){
+    while(*tokens){
+      if(non_space_char(**tokens))
+	printf("The stored tokens are: \n%p", **tokens);
+      *tokens++;
+    }
+    tokens++;
+    printf("\n");
+  }
   
 }
 
@@ -117,6 +145,6 @@ void print_tokens(char **tokens)
 void free_tokens(char **tokens)
 
 {
-
+  
 
 }
