@@ -72,8 +72,8 @@ char *token_terminator(char *token)
 int count_tokens(char *str)
 {
   int count = 0;
-  while(*str != 0){
-    if(*str = '\0')
+  while(*str){
+    if(space_char(*str))
       count++;
     str++;
   }
@@ -91,13 +91,14 @@ char *copy_str(char *inStr, short len)
   copy = (char *) malloc(len+1);
   int i = 0; 
   while(len < 0){
-    *copy = *inStr;
+    copy = inStr;
     len--;
     copy++;
     inStr++;
     i++;
   }
   copy -= i;
+  free(copy);
   return copy;
 
 }
@@ -108,17 +109,18 @@ char **tokenize(char* str)
 
 {
   char** arr;
-  arr = (char **) malloc(30);
+  int token_num = count_tokens(str);
+  arr = (char **) malloc(100);
   short i = 0;
-  str = token_terminator(str);
-  while(*str != '\n'){
-    if(*str == '\0'){
+  while(token_num){
+    if(space_char(*str)){
       *arr = copy_str(str - i, i); 
       arr++;
       i = 0;
     }
     i++;
     str++;
+    token_num--;
   }
   return arr;
 
@@ -145,6 +147,9 @@ void print_tokens(char **tokens)
 void free_tokens(char **tokens)
 
 {
-  
+  while(tokens){
+    free(*tokens);
+    *tokens++;
+  }
 
 }

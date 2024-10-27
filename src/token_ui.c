@@ -11,15 +11,19 @@ int main()
   char c;
   char *str;
   char **tokens;
-  str = (char *)malloc(sizeof(char *) * 100);
+  int i = 0;
+  str = (char *)malloc(sizeof(char *) * 50);
   
   c = getchar();
   while (c != EOF) {
     putchar(c);
     *str = c;
     str++;
-    if(c == '\n')
+    i++;
+    if(c == '\n'){
+      str -= i;
       goto test;
+    }
     c = getchar();
   }
 
@@ -34,7 +38,7 @@ int main()
 
   case '1':
     printf("testing tokenizer...\n"); 
-    tokens = (char **)malloc(count_tokens(str));
+    tokens = (char **)malloc(100);
     printf("number of tokens: %d", count_tokens(str));
     tokens = tokenize(str);
     print_tokens(tokens);
@@ -61,6 +65,6 @@ int main()
 
  end:
   free(str);
-  free(tokens);
+  free_tokens(tokens);
   return 0;
 }
