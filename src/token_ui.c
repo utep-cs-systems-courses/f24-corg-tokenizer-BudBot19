@@ -15,6 +15,9 @@ int main()
   str = (char *)malloc(sizeof(char *) * 50);
   
   c = getchar();
+  if(c == '\n')
+    goto start;
+  
   while (c != EOF) {
     putchar(c);
     *str = c;
