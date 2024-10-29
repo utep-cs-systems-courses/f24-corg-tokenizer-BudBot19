@@ -51,7 +51,7 @@ char *token_start(char *str)
 }
 
 
-
+//unsure if this works
 char *token_terminator(char *token)
 
 {
@@ -73,7 +73,7 @@ int count_tokens(char *str)
 {
   int count = 0;
   while(*str){
-    if(space_char(*str))
+    if(space_char(*str)) //faulty but works with clean input
       count++;
     str++;
   }
@@ -85,66 +85,64 @@ int count_tokens(char *str)
 
 
 char *copy_str(char *inStr, short len)
-
 {
-  char *copy;
-  copy = (char *) malloc(len+1);
-  int i = 0; 
-  while(len > 0){
-    copy = inStr;
-    len--;
-    copy++;
-    inStr++;
-    i++;
+
+  char *copy = (char *) malloc(len + 1);
+  for (int i = 0; i < len; i++) {
+    copy[i] = inStr[i]; // do [] with pointers to avoid permanent adress changes
   }
-  copy -= i;
-  free(copy);
+
+  copy[len] = '\0'; //null terminator at the end
   return copy;
 
 }
 
 
 
+
+
 char **tokenize(char* str)
-
 {
-  char** arr;
   int token_num = count_tokens(str);
-  arr = (char **) malloc((token_num + 1) * sizeof(char *));
-  short i = 0;
-  short arr_count = 0;
+  char **arr = (char **) malloc((token_num + 1) * sizeof(char *));  // +1 for terminator
+  int index = 0;
+  short i = 0; //token length
 
-  while(token_num){
-    if(space_char(*str)){
-      *arr = copy_str(str - i, i); 
-      arr++;
-      arr_count++;
-      i = 0;
+  while (*str) {
+    if (space_char(*str)) {
+      if (i > 0) { //avoids empty string
+	arr[index] = copy_str(str - i, i);
+	index++;
+	i = 0; //resets i so copy_str gets the right length
+      }
+    } else {
+      i++;
     }
-    i++;
     str++;
-    token_num--;
   }
-  
-  arr -= arr_count;
-  return arr;
 
+
+  // in case there is anything left
+  if (i > 0) {
+    arr[index] = copy_str(str - i, i);
+    index++;
+  }
+
+
+
+  arr[index] = NULL;  //caps off string with NULL terminator
+  return arr;
 }
 
 
 
 void print_tokens(char **tokens)
 {
-  while(tokens != NULL){
-    while(*tokens != NULL){
-      if(non_space_char(**tokens))
-	printf("The stored tokens are: \n%s", **tokens);
-      *tokens = (*tokens)++;
-    }
-    tokens++;
-    printf("\n");
+ printf("The stored tokens are:\n");
+ while (*tokens) {
+   printf("%s\n", *tokens);
+   tokens++;
   }
-  
 }
 
 

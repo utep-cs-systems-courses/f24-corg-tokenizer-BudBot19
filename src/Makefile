@@ -16,7 +16,7 @@ token_ui.o: tokenizer.h history.h
 
 tokenizer.o: tokenizer.h
 
-history.o: history.h
+history.o: history.h tokenizer.h
 
 
 

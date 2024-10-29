@@ -1,12 +1,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "history.h"
+#include "tokenizer.h"
 
 /* Initialize the linked list to keep the history. */
 
 List* init_history()
 {
-  return NULL;
+  List *start; //pointer to the beggining of list
+  start = (List *)malloc(sizeof(List));
+  start -> root = NULL;
+  return start;
 }
 
 
@@ -21,7 +25,25 @@ List* init_history()
 
 void add_history(List *list, char *str)
 {
+  Item *new = (Item *)malloc(sizeof(Item));
+  Item *current = list -> root;
+  int i = 0; //tracks id
 
+  while(current != NULL){
+    current = current -> next;
+    i++;
+  }
+
+  new -> id = i;
+
+  i=0;
+  while(str[i] != '\n'){ //calculates length
+    i++;
+  }
+
+  new -> str = copy_str(str, i+1);
+  new -> next = NULL;
+  current = new;
 }
 
 
@@ -34,7 +56,20 @@ void add_history(List *list, char *str)
 
 char *get_history(List *list, int id)
 {
-  return NULL;
+  Item *current = list -> root;
+
+  while(current !=NULL){
+    if(current -> id == id){
+      if(current -> str != NULL){
+	return current -> str;
+      } else {
+	printf("There is no string at id\n");
+      }
+    }
+    current = current -> next;
+  }
+  printf("Could not find given id\n");
+  return 0;
 }
 
 
@@ -43,7 +78,12 @@ char *get_history(List *list, int id)
 
 void print_history(List *list)
 {
+  Item *current = list -> root;
 
+  while(current != NULL){
+    printf("ID: %d", current -> id, " String: %s\n", current -> str);
+    current = current -> next;
+  }
 }
 
 
@@ -52,5 +92,13 @@ void print_history(List *list)
 
 void free_history(List *list)
 {
+  Item *current = list -> root;
+  
+  while(current != NULL){
+    free(current -> str);
+    free(current);
+    current = current -> next;
+  }
 
+  free(list);
 }

@@ -6,12 +6,14 @@
 
 int main()
 {
+  List *history = init_history();
+
  start:
   printf("Please enter a string.\n> ");
   char c;
   char *str;
   char **tokens;
-  int i = 0;
+  int i = 0; //keep track of adress changes
   str = (char *)malloc(sizeof(char *) * 50);
   
   c = getchar();
@@ -24,7 +26,8 @@ int main()
     str++;
     i++;
     if(c == '\n'){
-      str -= i;
+      str -= i; //moves address to og location
+      add_history(history, str); //updates history
       goto test;
     }
     c = getchar();
@@ -42,13 +45,24 @@ int main()
   case '1':
     printf("testing tokenizer...\n"); 
     tokens = (char **)malloc(100);
-    printf("number of tokens: %d", count_tokens(str));
+    printf("number of tokens: %d\n", count_tokens(str));
     tokens = tokenize(str);
     print_tokens(tokens);
     goto test;
     
   case '2':
-    printf("pulling history...\n");
+    c = getchar();
+    printf("Enter (p) to print history or (!) followed by an id number\n");
+    c = getchar();
+    if(c == 'p')
+      print_history(history);
+    else if (c == '!'){
+      c = getchar();
+      scanf(&c, "%d", &i);
+      printf("Based on the id: \n%s", get_history(history, i));
+    }
+    else
+      printf("Invalid Input\n");
     goto test;
     
   case '3':
@@ -69,5 +83,6 @@ int main()
  end:
   free(str);
   free_tokens(tokens);
+  free_history(history);
   return 0;
 }
